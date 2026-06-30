@@ -97,18 +97,20 @@ let p = camoufox-nix.packages.${system};
 in p.camofox-mcp.override { camoufox = p.camoufox-bin; }
 ```
 
-Track a different release by overriding `camoufoxBinSource` with per-architecture
-`asset` and `hash` values:
+The pin lives in `packages/camoufox-bin/versions.json`. Run
+`nix run .#camoufox-bin.updateScript` from the repository root, optionally with
+`-- <tag>`, to bump it to the latest release. To track a different release ad
+hoc, override `camoufoxBinSource` with the `release` tag plus each
+architecture's `version`, the differing `alpha.N`, and `hash`; the asset name
+and Firefox version are derived:
 
 ```nix
 camoufox-bin-next = camoufox-bin.override {
   camoufoxBinSource = {
     release = "v150.0.2-beta.25";
-    firefoxVersion = "150.0.2";
-    displayVersion = "150.0.2-beta.25";
     sources = {
-      x86_64-linux = { asset = "camoufox-150.0.2-alpha.26-lin.x86_64.zip"; hash = "sha256-..."; };
-      aarch64-linux = { asset = "camoufox-150.0.2-alpha.25-lin.arm64.zip"; hash = "sha256-..."; };
+      x86_64-linux = { version = "150.0.2-alpha.26"; hash = "sha256-..."; };
+      aarch64-linux = { version = "150.0.2-alpha.25"; hash = "sha256-..."; };
     };
   };
 };
