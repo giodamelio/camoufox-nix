@@ -28,6 +28,7 @@ versions identify source snapshots, not upstream releases.
 | Flake package | Version | Description | Declared platforms |
 | --- | --- | --- | --- |
 | `camoufox` | `150.0.2` | Patched Camoufox/Firefox browser source build | Linux |
+| `camoufox-bin` | `150.0.2-beta.25` | Prebuilt Camoufox release patched for NixOS; no Firefox compile | Linux `x86_64`, `aarch64` |
 | `camoufox-vulpineos` | `0-unstable-2026-04-29` | VulpineOS Camoufox fork; browser display version `146.0.1-beta.25` | Linux |
 | `python-camoufox` | `0.5.3` | Python interface for launching Camoufox with Playwright | Unix |
 | `cloverlabs-camoufox` | `0.6.0` | CloverLabs Python interface; GeoIP enabled by default | Unix |
@@ -44,6 +45,74 @@ versions identify source snapshots, not upstream releases.
 | `vulpineos-camoufox-notes` | `0.1.0` | Reference documentation derivation; no binary | All |
 | `docker-camoufox-camofox-mcp` | `latest` | OCI image containing `camoufox` and `camofox-mcp` | OCI tarball |
 | `docker-vulpineos-foxbridge` | `latest` | OCI image containing VulpineOS, foxbridge, and VulpineOS Camoufox | OCI tarball |
+
+## Prebuilt browser
+
+`camoufox-bin` unpacks an official
+[Camoufox release](https://github.com/daijro/camoufox/releases) and patches it
+for NixOS with `autoPatchelfHook` and a GTK wrapper instead of compiling Firefox
+from source. It exposes the same `bin/camoufox`, `version.json`, and
+`properties.json` as `camoufox`, so every consumer that reads the browser
+executable environment variables works against it unchanged.
+
+```console
+$ nix build .#camoufox-bin
+$ nix run .#camoufox-bin -- --version
+$ ./result/bin/camoufox https://example.com
+```
+
+Write a headless screenshot to confirm it renders:
+
+```console
+$ nix run .#camoufox-bin -- --headless --screenshot "$PWD/camoufox-bin.png" https://example.com
+```
+
+`camoufox-bin` declares Linux `x86_64` and `aarch64` only. It skips the Firefox
+compile but fetches a release archive of roughly 660 MB on the first build. Its
+bundled fonts are wired through `FONTCONFIG_FILE`, so a bare launch fingerprints
+the same as the Python and JavaScript launchers.
+
+### Point another tool at the prebuilt browser
+
+Every browser-launching package takes the browser as a `callPackage` argument, so
+a consumer can swap it with `.override` without editing this flake:
+
+```nix
+# in your own flake, with camoufox-nix as an input:
+let p = camoufox-nix.packages.${system};
+in p.camofox-mcp.override { camoufox = p.camoufox-bin; }
+```
+
+Most tools name the argument `camoufox`: `camofox-cli`, `camofox-browser`,
+`jo-camofox-browser`, `camofox-mcp`, `camoufox-js`, `camoufox-reverse-mcp`, and
+`camoufox-browser-cli`. The two Python interfaces name it `camoufox-browser`
+instead:
+
+```nix
+p.python-camoufox.override     { camoufox-browser = p.camoufox-bin; }
+p.cloverlabs-camoufox.override { camoufox-browser = p.camoufox-bin; }
+```
+
+Not everything bundles a browser: `foxbridge`, `vulpineos`, the
+`camoufox-mcp-server` placeholder, and `vulpineos-camoufox-notes` take no browser
+input, so there is nothing to override.
+
+Track a different release by overriding `camoufoxBinSource` with per-architecture
+`asset` and `hash` values:
+
+```nix
+camoufox-bin-next = camoufox-bin.override {
+  camoufoxBinSource = {
+    release = "v150.0.2-beta.25";
+    firefoxVersion = "150.0.2";
+    displayVersion = "150.0.2-beta.25";
+    sources = {
+      x86_64-linux = { asset = "camoufox-150.0.2-alpha.26-lin.x86_64.zip"; hash = "sha256-..."; };
+      aarch64-linux = { asset = "camoufox-150.0.2-alpha.25-lin.arm64.zip"; hash = "sha256-..."; };
+    };
+  };
+};
+```
 
 ## Consumer examples
 
@@ -203,6 +272,7 @@ Never commit or print this token.
     ├── apps.nix
     ├── flake-module.nix
     ├── camoufox/
+    ├── camoufox-bin/
     ├── python-camoufox/
     ├── camoufox-js/
     ├── camofox-cli/
