@@ -72,30 +72,30 @@ compile but fetches a release archive of roughly 660 MB on the first build. Its
 bundled fonts are wired through `FONTCONFIG_FILE`, so a bare launch fingerprints
 the same as the Python and JavaScript launchers.
 
-### Point another tool at the prebuilt browser
+### Ready-made tool variants
 
-Every browser-launching package takes the browser as a `callPackage` argument, so
-a consumer can swap it with `.override` without editing this flake:
+Every tool in this flake that uses Camoufox is also exposed pre-wired to the
+prebuilt browser, as a subpackage under `camoufox-bin`. No override needed:
+
+```console
+$ nix build .#camoufox-bin.python-camoufox
+$ nix run .#camoufox-bin.camoufox-reverse-mcp -- --help
+```
+
+These variants are derived automatically: any package wired to Camoufox, either
+directly or transitively through another package to any depth, gets a
+`camoufox-bin.<name>` variant whose whole closure uses the prebuilt browser and
+never builds Firefox from source.
+
+To wire up a package outside this flake, each tool still takes the browser as a
+`callPackage` argument, named `camoufox` for most tools and `camoufox-browser`
+for the two Python interfaces:
 
 ```nix
 # in your own flake, with camoufox-nix as an input:
 let p = camoufox-nix.packages.${system};
 in p.camofox-mcp.override { camoufox = p.camoufox-bin; }
 ```
-
-Most tools name the argument `camoufox`: `camofox-cli`, `camofox-browser`,
-`jo-camofox-browser`, `camofox-mcp`, `camoufox-js`, `camoufox-reverse-mcp`, and
-`camoufox-browser-cli`. The two Python interfaces name it `camoufox-browser`
-instead:
-
-```nix
-p.python-camoufox.override     { camoufox-browser = p.camoufox-bin; }
-p.cloverlabs-camoufox.override { camoufox-browser = p.camoufox-bin; }
-```
-
-Not everything bundles a browser: `foxbridge`, `vulpineos`, the
-`camoufox-mcp-server` placeholder, and `vulpineos-camoufox-notes` take no browser
-input, so there is nothing to override.
 
 Track a different release by overriding `camoufoxBinSource` with per-architecture
 `asset` and `hash` values:
