@@ -5,6 +5,7 @@
   poetry-core,
   browserforge,
   click,
+  inquirer,
   language-tags,
   lxml,
   numpy,
@@ -14,6 +15,7 @@
   pysocks,
   pyyaml,
   requests,
+  rich-click,
   screeninfo,
   tqdm,
   typing-extensions,
@@ -27,12 +29,12 @@ let
 in
 buildPythonPackage rec {
   pname = "camoufox";
-  version = "0.4.11";
+  version = "0.5.3";
   pyproject = true;
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-CiydJKxQcMEE58KxJcCjk39w76QWCE74iv6Uwypy7r4=";
+    hash = "sha256-0wmNanHVOC9XL6l9jg/9rT9qXe/cSKTJVwbAcYAaic4=";
   };
 
   patches = [ ./nix-executable-env.patch ];
@@ -42,6 +44,7 @@ buildPythonPackage rec {
   dependencies = [
     browserforge
     click
+    inquirer
     language-tags
     lxml
     numpy
@@ -51,6 +54,7 @@ buildPythonPackage rec {
     pysocks
     pyyaml
     requests
+    rich-click
     screeninfo
     tqdm
     typing-extensions

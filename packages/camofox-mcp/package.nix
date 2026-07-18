@@ -11,28 +11,17 @@
 let
   camoufoxEnv = import ../camoufox-env.nix { inherit lib; };
   pname = "camofox-mcp";
-  version = "1.13.1";
+  version = "1.14.5";
 
   srcWithLock = runCommand "${pname}-${version}-src-with-lock" { } ''
     mkdir -p $out
     tar -xzf ${
       fetchurl {
         url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-        hash = "sha256-JoohZ46aw3TpNy47YJLENpaPodI3WEx9JEJw1ZqWzag=";
+        hash = "sha256-K5mT5T0Ckucz8WZtoU3Q4fZT5WgH8F17+/TPmZNwVdc=";
       }
     } -C $out --strip-components=1
-    cp ${
-      fetchurl {
-        url = "https://raw.githubusercontent.com/redf0x1/camofox-mcp/main/package-lock.json";
-        hash = "sha256-UnI04NRcZ86nI1l6xmF33fJbPaOMkHdJu7En3KjlAlQ=";
-      }
-    } $out/package-lock.json
-    cp ${
-      fetchurl {
-        url = "https://raw.githubusercontent.com/redf0x1/camofox-mcp/main/package.json";
-        hash = "sha256-2s67zT2pqfeX45XwoYsyY1M+HgBbNDvsZj+QWvt5rOY=";
-      }
-    } $out/package.json
+    cp ${./package-lock.json} $out/package-lock.json
   '';
 in
 buildNpmPackage {
@@ -40,7 +29,7 @@ buildNpmPackage {
 
   src = srcWithLock;
 
-  npmDepsHash = "sha256-/5KhbpF/jUqJ1umBoRLGxUcBOl6zknY9cCJh67T9+HE=";
+  npmDepsHash = "sha256-CwkriCEfTfWGJOyskH3ed7aIkBKmONL3RGXIsT+51SI=";
 
   npmDepsFetcherVersion = 2;
   makeCacheWritable = true;

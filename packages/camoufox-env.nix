@@ -28,7 +28,7 @@ rec {
   patchCamoufoxJs = packageDir: ''
     if [ -f "${packageDir}/dist/pkgman.js" ]; then
       substituteInPlace ${packageDir}/dist/pkgman.js \
-        --replace-fail 'export const INSTALL_DIR = userCacheDir("camoufox");' 'export const INSTALL_DIR = userCacheDir("camoufox");
+        --replace-fail ': userCacheDir("camoufox");' ': userCacheDir("camoufox");
     export function envExecutablePath() {
         const executable = ${executableEnvJs};
         return executable ? path.resolve(executable) : null;

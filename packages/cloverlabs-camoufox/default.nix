@@ -30,13 +30,13 @@ let
 in
 buildPythonPackage rec {
   pname = "cloverlabs-camoufox";
-  version = "0.5.5";
+  version = "0.6.0";
   pyproject = true;
 
   src = fetchPypi {
     pname = "cloverlabs_camoufox";
     inherit version;
-    hash = "sha256-TzMHGeKtIdlMn0+uEIoHTgfd3627HiJD0dZ2IaPb/tc=";
+    hash = "sha256-mSf5tDTIL6rVX45vV93R/PNVpDulD3nM8n5JuKuTq9Q=";
   };
 
   build-system = [ poetry-core ];

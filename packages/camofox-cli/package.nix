@@ -13,14 +13,14 @@ let
   camoufoxEnv = import ../camoufox-env.nix { inherit lib; };
   pname = "camofox-cli";
   npmName = "camoufox-cli";
-  version = "0.2.0";
+  version = "0.7.1";
 
   srcWithLock = runCommand "${pname}-${version}-src-with-lock" { } ''
     mkdir -p $out
     tar -xzf ${
       fetchurl {
         url = "https://registry.npmjs.org/${npmName}/-/${npmName}-${version}.tgz";
-        hash = "sha256-53nqE1Jnl1kSQvlOHhlHqe7WTdBeobRfuiupHZPpcZQ=";
+        hash = "sha256-vtNFRwq/Pvhk89IsTZ4RjCjXF615lHrL/6Bc7D8RLGw=";
       }
     } -C $out --strip-components=1
     cp ${./package-lock.json} $out/package-lock.json
@@ -31,7 +31,7 @@ buildNpmPackage {
 
   src = srcWithLock;
 
-  npmDepsHash = "sha256-nlBqeUgB4Vomu0LckIzIJxg0tSmOQ+g2SgiVBzmznc4=";
+  npmDepsHash = "sha256-eMWMSFqv7D/q7EDbEhzOE6M0tqW33TtpqRV23pY0D0E=";
 
   makeCacheWritable = true;
   npm_config_build_from_source = "true";
@@ -43,26 +43,14 @@ buildNpmPackage {
   ];
 
   postPatch = ''
-    substituteInPlace package.json \
-      --replace-fail '"playwright-core": "^1.52.0"' '"playwright-core": "1.53.1"'
     substituteInPlace dist/cli.js \
-      --replace-fail 'spawn("node", [daemonPath, ...args], {' 'spawn(process.execPath, [daemonPath, ...args], {'
-    substituteInPlace dist/browser.js \
-      --replace-fail '        execFileSync("npx", ["camoufox-js", "path"], { stdio: "pipe" });' '        const executablePath = ${camoufoxEnv.executableEnvJs};
-        if (executablePath)
-            return;
-        execFileSync("npx", ["camoufox-js", "path"], { stdio: "pipe" });'
-    substituteInPlace dist/browser.js \
-      --replace-fail '        const launchOpts = { headless };' '        const launchOpts = { headless };
-        const executablePath = ${camoufoxEnv.executableEnvJs};
-        if (executablePath)
-            launchOpts.executable_path = executablePath;'
-    substituteInPlace dist/cli.js \
-      --replace-fail '        execFileSync("npx", ["camoufox-js", "fetch"], { stdio: "inherit" });' '        if (${camoufoxEnv.executableEnvJs}) {
-            console.error("[camoufox-cli] Browser managed by Nix wrapper.");
-            return;
-        }
-        execFileSync("npx", ["camoufox-js", "fetch"], { stdio: "inherit" });'
+      --replace-fail 'spawn("node", [daemonPath, ...args], {' 'spawn(process.execPath, [daemonPath, ...args], {' \
+      --replace-fail '    if (action === "install") {' '    // Client-side browser management is handled by the Nix package.
+    if (action === "install" && (process.env.CAMOUFOX_EXECUTABLE || process.env.CAMOUFOX_EXECUTABLE_PATH || process.env.CAMOFOX_EXECUTABLE || process.env.CAMOFOX_EXECUTABLE_PATH)) {
+        process.stderr.write("[camoufox-cli] Browser is managed by Nix; skipping browser download.\n");
+        return;
+    }
+    if (action === "install") {'
   '';
 
   installPhase = ''

@@ -9,31 +9,21 @@
   camoufoxSource ? {
     owner = "daijro";
     repo = "camoufox";
-    rev = "65f3454f4858a4a3ed2840a05ac7b339d5d352c5";
-    hash = "sha256-tBqGRwy8dYErK0Qf54XVtowIVtKS1UhhQS4uWFuQN9k=";
-    version = "0-unstable-2026-04-30";
-    firefoxVersion = "146.0.1";
-    displayVersion = "146.0.1-beta.25";
+    rev = "0ac611c4ade309d44a0e6972f26e04684df76be3";
+    hash = "sha256-inY39JNSWm03Cv1+VcQFo4oXISens70Jy2qfw/HN+Cs=";
+    version = "150.0.2";
+    firefoxVersion = "150.0.2";
+    firefoxHash = "sha256-44MLIM32YKnN7G5NIybXztBzM9l0bfAoz8AMghasvsk=";
+    displayVersion = "150.0.2";
     homepage = "https://github.com/daijro/camoufox";
     sourceName = "daijro/camoufox";
-    patchFixups = {
-      "timezone-spoofing.patch" = {
-        from = [
-          "@@ -0,0 +1,72 @@"
-          "@@ -0,0 +1,28 @@"
-        ];
-        to = [
-          "@@ -0,0 +1,71 @@"
-          "@@ -0,0 +1,27 @@"
-        ];
-      };
-    };
   },
 }:
 
 let
   version = camoufoxSource.version;
   firefoxVersion = camoufoxSource.firefoxVersion;
+  firefoxHash = camoufoxSource.firefoxHash;
   displayVersion = camoufoxSource.displayVersion;
   camoufoxRelease = lib.removePrefix "${firefoxVersion}-" displayVersion;
   rev = camoufoxSource.rev;
@@ -42,6 +32,8 @@ let
   sourceName = camoufoxSource.sourceName or "${camoufoxSource.owner}/${camoufoxSource.repo}";
   excludedPatchFiles = camoufoxSource.excludedPatchFiles or [ ];
   patchFixups = camoufoxSource.patchFixups or { };
+  settingsConfig = camoufoxSource.settingsConfig or "camoufox.cfg";
+  binaryName = camoufoxSource.binaryName or "camoufox";
 
   upstreamSrc =
     camoufoxSource.src or (fetchFromGitHub {
@@ -50,7 +42,7 @@ let
     });
   firefoxSrc = fetchurl {
     url = "https://archive.mozilla.org/pub/firefox/releases/${firefoxVersion}/source/firefox-${firefoxVersion}.source.tar.xz";
-    hash = "sha256-6WeKDoRzkjlT4dwxLDeRkGhiO2qiCtreFiZgSSWBkes=";
+    hash = firefoxHash;
   };
 
   patchTree = upstreamSrc + "/patches";
@@ -165,7 +157,7 @@ let
         inherit version;
 
         applicationName = "Camoufox";
-        binaryName = "camoufox";
+        inherit binaryName;
         src = upstreamSrc;
 
         requireSigning = false;
@@ -232,7 +224,7 @@ let
           cp -f "${upstreamSrc}/assets/search-config.json" "$sourceRoot/services/settings/dumps/main/search-config.json"
           cp -f "${upstreamSrc}/patches/librewolf/pack_vs.py" "$sourceRoot/build/vs/pack_vs.py"
 
-          cp -f "${settingsSource}/camoufox.cfg" "$sourceRoot/lw/camoufox.cfg"
+          cp -f "${settingsSource}/${settingsConfig}" "$sourceRoot/lw/${settingsConfig}"
           cp -f "${settingsSource}/distribution/policies.json" "$sourceRoot/lw/policies.json"
           cp -f "${settingsSource}/defaults/pref/local-settings.js" "$sourceRoot/lw/local-settings.js"
           cp -f "${settingsSource}/chrome.css" "$sourceRoot/lw/chrome.css"

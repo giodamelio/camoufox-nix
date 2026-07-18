@@ -11,28 +11,17 @@
 let
   camoufoxEnv = import ../camoufox-env.nix { inherit lib; };
   pname = "camofox-browser";
-  version = "2.1.1";
+  version = "2.4.6";
 
   srcWithLock = runCommand "${pname}-${version}-src-with-lock" { } ''
     mkdir -p $out
     tar -xzf ${
       fetchurl {
         url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-        hash = "sha256-vcNKI0sbiNQgkymTB0qYm/KaujU7qQy3wn18otdGESk=";
+        hash = "sha256-Sa4Q0tetX2Wmis7G8sO+Y6WxHDII97mCZTqByVThFXs=";
       }
     } -C $out --strip-components=1
-    cp ${
-      fetchurl {
-        url = "https://raw.githubusercontent.com/redf0x1/camofox-browser/main/package-lock.json";
-        hash = "sha256-6iihKCT8RyGiMt98MsUOh1mWoLS8zA2N3XXoKNTZc0I=";
-      }
-    } $out/package-lock.json
-    cp ${
-      fetchurl {
-        url = "https://raw.githubusercontent.com/redf0x1/camofox-browser/main/package.json";
-        hash = "sha256-C43mQ2e4s4FxPB8t8RcM52MkebtewQcJE8TKhFhbkow=";
-      }
-    } $out/package.json
+    cp ${./package-lock.json} $out/package-lock.json
   '';
 in
 buildNpmPackage {
@@ -40,7 +29,7 @@ buildNpmPackage {
 
   src = srcWithLock;
 
-  npmDepsHash = "sha256-uXo1E69KqMCB9/GQz+/zQzcQ6lBPnBJIVX2rnPIHkfw=";
+  npmDepsHash = "sha256-hn8v7ZUjhuYuQhQcXFWf9L02Bpg8pGXC2aNrkAqnBNs=";
 
   npmDepsFetcherVersion = 2;
   makeCacheWritable = true;
@@ -50,6 +39,8 @@ buildNpmPackage {
   nativeBuildInputs = [ makeWrapper ];
 
   postPatch = ''
+    substituteInPlace package.json \
+      --replace-fail '"camoufox-js": "^0.8.5"' '"camoufox-js": "0.11.2"'
     substituteInPlace dist/src/services/context-pool.js \
       --replace-fail 'const opts = await (0, camoufox_js_1.launchOptions)({' 'const opts = await (0, camoufox_js_1.launchOptions)({ ...(${camoufoxEnv.executableEnvJs} ? { executable_path: ${camoufoxEnv.executableEnvJs} } : {}),'
   '';
