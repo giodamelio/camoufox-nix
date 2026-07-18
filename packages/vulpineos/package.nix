@@ -7,16 +7,16 @@
 buildGoModule rec {
   pname = "vulpineos";
   version = "0-unstable-2026-04-29";
-  rev = "main";
+  rev = "f8579728616e892c364aa4c571f05db5869bc59f";
 
   src = fetchFromGitHub {
     owner = "VulpineOS";
     repo = "VulpineOS";
     inherit rev;
-    hash = "sha256-Pl96JFx7+DTvr7aKMyFwN37Vbz0ckxsNcuv2ku80Zww=";
+    hash = "sha256-HGQ1FeJIG/i/fwIynqK3K/c3V1MS7ZjKvKSc23XjKg0=";
   };
 
-  vendorHash = "sha256-mto81s8XYNli1GtQpYpXNaGHSL98W8tg5vzyw/PJpQg=";
+  vendorHash = "sha256-vYcdxbfNSRRxfwtABEsJw+qau45wM7t1KI2FFznN2AY=";
 
   subPackages = [ "cmd/vulpineos" ];
 
