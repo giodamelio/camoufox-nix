@@ -27,8 +27,9 @@ rec {
 
   patchCamoufoxJs = packageDir: ''
     if [ -f "${packageDir}/dist/pkgman.js" ]; then
-      substituteInPlace ${packageDir}/dist/pkgman.js \
-        --replace-fail ': userCacheDir("camoufox");' ': userCacheDir("camoufox");
+      if grep -qE 'export const INSTALL_DIR = (process.env.CAMOUFOX_INSTALL_DIR|userCacheDir)' ${packageDir}/dist/pkgman.js; then
+        substituteInPlace ${packageDir}/dist/pkgman.js \
+          --replace-fail 'export const OS_NAME = OS_MAP[process.platform];' 'export const OS_NAME = OS_MAP[process.platform];
     export function envExecutablePath() {
         const executable = ${executableEnvJs};
         return executable ? path.resolve(executable) : null;
@@ -36,12 +37,30 @@ rec {
     function envExecutableDir() {
         const executable = envExecutablePath();
         return executable ? path.dirname(executable) : null;
-    }' \
-        --replace-fail 'export function installedVerStr() {
+    }'
+      else
+        substituteInPlace ${packageDir}/dist/pkgman.js \
+          --replace-fail ': userCacheDir("camoufox");' ': userCacheDir("camoufox");
+    export function envExecutablePath() {
+        const executable = ${executableEnvJs};
+        return executable ? path.resolve(executable) : null;
+    }
+    function envExecutableDir() {
+        const executable = envExecutablePath();
+        return executable ? path.dirname(executable) : null;
+    }'
+      fi
+
+      if grep -q 'return Version.fromPath().fullString;' ${packageDir}/dist/pkgman.js; then
+        substituteInPlace ${packageDir}/dist/pkgman.js \
+          --replace-fail 'export function installedVerStr() {
         return Version.fromPath().fullString;
     }' 'export function installedVerStr() {
         return Version.fromPath(envExecutableDir() ?? INSTALL_DIR).fullString;
-    }' \
+    }'
+      fi
+
+      substituteInPlace ${packageDir}/dist/pkgman.js \
         --replace-fail 'export function camoufoxPath(downloadIfMissing = true) {
         // Ensure the directory exists and is not empty' 'export function camoufoxPath(downloadIfMissing = true) {
         const executableDir = envExecutableDir();
