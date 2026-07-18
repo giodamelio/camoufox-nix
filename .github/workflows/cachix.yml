@@ -1,0 +1,40 @@
+name: Build and cache packages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: cachix/install-nix-action@v31
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: mtech
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Build flake packages
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t packages < <(
+            nix eval --raw '.#packages.x86_64-linux' --apply \
+              'packages: builtins.concatStringsSep "\n" (builtins.filter (name: name != "default") (builtins.attrNames packages))'
+          )
+
+          targets=()
+          for package in "${packages[@]}"; do
+            targets+=(".#${package}")
+          done
+
+          nix build --no-link --print-build-logs "${targets[@]}"
