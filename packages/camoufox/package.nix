@@ -2,6 +2,7 @@
   lib,
   stdenv,
   buildMozillaMach,
+  buildPackages,
   fetchFromGitHub,
   fetchurl,
   runCommand,
@@ -250,6 +251,7 @@ let
         extraPatches = orderedPatchPaths;
 
         extraConfigureFlags = [
+          "READELF=${lib.getExe' buildPackages.binutils-unwrapped "readelf"}"
           "--disable-backgroundtasks"
           "--disable-default-browser-agent"
           "--disable-system-policies"
