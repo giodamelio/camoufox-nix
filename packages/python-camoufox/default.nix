@@ -39,6 +39,12 @@ buildPythonPackage rec {
 
   patches = [ ./nix-executable-env.patch ];
 
+  # nixpkgs-unstable ships playwright 1.61.x; upstream caps at <1.61.
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail 'playwright = "<1.61"' 'playwright = "<1.62"'
+  '';
+
   build-system = [ poetry-core ];
 
   dependencies = [

@@ -101,10 +101,12 @@
           devShells.default = pkgs.mkShell {
             packages = [
               pkgs.jj
-              pkgs.nixfmt-rfc-style
-              pkgs.nixpkgs-fmt
+              pkgs.nixfmt
+              # pkgs.nixpkgs-fmt
               pkgs.nodejs
               pkgs.python3
+              pkgs.nix-update
+              pkgs.nix-output-monitor
             ];
           };
 

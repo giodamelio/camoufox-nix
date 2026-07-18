@@ -13,14 +13,14 @@
 let
   camoufoxEnv = import ../camoufox-env.nix { inherit lib; };
   pname = "camoufox-js";
-  version = "0.11.2";
+  version = "0.11.5";
 
   srcWithLock = runCommand "${pname}-${version}-src-with-lock" { } ''
     mkdir -p $out
     tar -xzf ${
       fetchurl {
         url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-        hash = "sha256-XjdZH5seixpefChRPATGuDiWDtKisNt5IPq1m28KfdI=";
+        hash = "sha256-ABDE8sJMccTEg1RkZYkhr2PhbMGPy5LdMQlkaspVHTI=";
       }
     } -C $out --strip-components=1
     substituteInPlace $out/package.json \
@@ -33,10 +33,9 @@ buildNpmPackage {
 
   src = srcWithLock;
 
-  npmDepsHash = "sha256-+7KYiZwhtfLliWwzItBEioHAdKyeqSfha8euzQnA+dM=";
+  npmDepsHash = "sha256-DY2RmrrKk4Pqxo5vge0NoDvIJJkLVE9K7PyxALkoJN8=";
 
   makeCacheWritable = true;
-  npmFlags = [ "--ignore-scripts" ];
   dontNpmBuild = true;
 
   nativeBuildInputs = [
@@ -52,13 +51,8 @@ buildNpmPackage {
 
     mkdir -p $out/{bin,lib/${pname}}
 
-    # Keep the installed dependency tree intact: the CLI eagerly imports modules
-    # that use playwright-core even for `path`/`fetch`, and `npm prune --omit=dev`
-    # currently removes it from this upstream package despite the lockfile entry.
-    npm rebuild better-sqlite3 --build-from-source --offline
-    find node_modules/better-sqlite3/build/Release -mindepth 1 \
-      ! -name better_sqlite3.node \
-      -exec rm -rf {} +
+    # better-sqlite3 13 ships ABI-stable N-API prebuilds (prebuilds/linux-*.node),
+    # so no native compilation is needed.
 
     cp -r dist node_modules package.json README.md LICENSE.md $out/lib/${pname}/
 

@@ -10,12 +10,12 @@
   camoufoxSource ? {
     owner = "daijro";
     repo = "camoufox";
-    rev = "0ac611c4ade309d44a0e6972f26e04684df76be3";
-    hash = "sha256-inY39JNSWm03Cv1+VcQFo4oXISens70Jy2qfw/HN+Cs=";
-    version = "150.0.2";
-    firefoxVersion = "150.0.2";
-    firefoxHash = "sha256-44MLIM32YKnN7G5NIybXztBzM9l0bfAoz8AMghasvsk=";
-    displayVersion = "150.0.2";
+    rev = "0583c3ec94f5a9df5cb2d09553fbfe80589b6e2d";
+    hash = "sha256-Fe/1t1ihDoZML87muiIZ9hQZyal7PUW8pUymoZnuMTo=";
+    version = "152.0.4";
+    firefoxVersion = "152.0.4";
+    firefoxHash = "sha256-/YmYIgLNpTU6JzB9hdSJAtRldtRtHJ421VdA5jtSFrs=";
+    displayVersion = "152.0.4";
     homepage = "https://github.com/daijro/camoufox";
     sourceName = "daijro/camoufox";
   },
@@ -139,9 +139,20 @@ let
           ac_add_options --enable-bootstrap
         ''
         "ac_add_options --enable-bootstrap"
+        ''
+          # Use ccache for faster incremental rebuilds if available
+          if command -v ccache >/dev/null 2>&1; then
+            ac_add_options --with-ccache=ccache
+          fi
+        ''
         "ac_add_options --with-ccache=ccache"
       ]
-      [ "" "" "" ]
+      [
+        ""
+        ""
+        ""
+        ""
+      ]
       (builtins.readFile (upstreamSrc + "/assets/base.mozconfig"))
     + ''
 
@@ -248,7 +259,11 @@ let
           runHook postUnpack
         '';
 
-        extraPatches = [ ./153-cbindgen-0.29.4-compat.patch ] ++ orderedPatchPaths;
+        # Bug 2046162 (drop redundant `pub` BudgetType qualifiers) landed in
+        # Firefox 152; only needed to backport for older source trees.
+        extraPatches =
+          (lib.optional (lib.versionOlder firefoxVersion "152") ./153-cbindgen-0.29.4-compat.patch)
+          ++ orderedPatchPaths;
 
         extraConfigureFlags = [
           "READELF=${lib.getExe' buildPackages.binutils-unwrapped "readelf"}"
@@ -265,7 +280,7 @@ let
           license = lib.licenses.mpl20;
           sourceProvenance = with lib.sourceTypes; [ fromSource ];
           platforms = lib.platforms.linux;
-          mainProgram = "camoufox";
+          mainProgram = binaryName;
         };
         extraPassthru = {
           inherit
