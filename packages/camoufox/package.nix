@@ -248,7 +248,7 @@ let
           runHook postUnpack
         '';
 
-        extraPatches = orderedPatchPaths;
+        extraPatches = [ ./153-cbindgen-0.29.4-compat.patch ] ++ orderedPatchPaths;
 
         extraConfigureFlags = [
           "READELF=${lib.getExe' buildPackages.binutils-unwrapped "readelf"}"
