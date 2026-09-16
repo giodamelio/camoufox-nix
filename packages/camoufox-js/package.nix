@@ -13,14 +13,14 @@
 let
   camoufoxEnv = import ../camoufox-env.nix { inherit lib; };
   pname = "camoufox-js";
-  version = "0.11.5";
+  version = "0.12.0";
 
   srcWithLock = runCommand "${pname}-${version}-src-with-lock" { } ''
     mkdir -p $out
     tar -xzf ${
       fetchurl {
         url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-        hash = "sha256-ABDE8sJMccTEg1RkZYkhr2PhbMGPy5LdMQlkaspVHTI=";
+        hash = "sha256-DWTGmX3vcaIYZI6VOXFDXDZLdt7P0uyzNdlfrl7R0qg=";
       }
     } -C $out --strip-components=1
     substituteInPlace $out/package.json \
@@ -33,7 +33,7 @@ buildNpmPackage {
 
   src = srcWithLock;
 
-  npmDepsHash = "sha256-DY2RmrrKk4Pqxo5vge0NoDvIJJkLVE9K7PyxALkoJN8=";
+  npmDepsHash = "sha256-ruz61WKphuGA8xkOstZPvxMHNJxtg9w1Y0LEtqJkuZA=";
 
   makeCacheWritable = true;
   dontNpmBuild = true;

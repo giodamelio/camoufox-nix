@@ -11,14 +11,14 @@
 let
   camoufoxEnv = import ../camoufox-env.nix { inherit lib; };
   pname = "camofox-mcp";
-  version = "1.14.5";
+  version = "1.15.0";
 
   srcWithLock = runCommand "${pname}-${version}-src-with-lock" { } ''
     mkdir -p $out
     tar -xzf ${
       fetchurl {
         url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-        hash = "sha256-K5mT5T0Ckucz8WZtoU3Q4fZT5WgH8F17+/TPmZNwVdc=";
+        hash = "sha256-FQ7jcpzH6YpIQzgLbOTiztY7rE55SN+H+r2hTD7IbAM=";
       }
     } -C $out --strip-components=1
     cp ${./package-lock.json} $out/package-lock.json
@@ -29,7 +29,7 @@ buildNpmPackage {
 
   src = srcWithLock;
 
-  npmDepsHash = "sha256-CwkriCEfTfWGJOyskH3ed7aIkBKmONL3RGXIsT+51SI=";
+  npmDepsHash = "sha256-iqWNZWvCVD9X8qllDNpsms4e8SsZe4i8Azgb4VP2YiY=";
 
   npmDepsFetcherVersion = 2;
   makeCacheWritable = true;

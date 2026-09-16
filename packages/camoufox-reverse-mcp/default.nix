@@ -17,14 +17,14 @@ let
 in
 buildPythonApplication rec {
   pname = "camoufox-reverse-mcp";
-  version = "1.1.0-unstable-2026-05-08";
+  version = "1.8.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "WhiteNightShadow";
     repo = "camoufox-reverse-mcp";
-    rev = "54a72d31b6537ac845fc775296f6d221a73ed137";
-    hash = "sha256-OOv7IgiqFAGUTnax+PHaj5QimHWdiZTVucbEt+PaS8k=";
+    rev = "da5162a45b09901fa3bf78dc3893691d42f5a71a";
+    hash = "sha256-2xWEsWVoKM9z8cUA6moKWSAjHrTZPTkRvzZaD5AtY/k=";
   };
 
   build-system = [ hatchling ];

@@ -4,7 +4,6 @@
   fetchPypi,
   poetry-core,
   browserforge,
-  click,
   inquirer,
   language-tags,
   lxml,
@@ -17,7 +16,6 @@
   requests,
   rich-click,
   screeninfo,
-  tqdm,
   typing-extensions,
   ua-parser,
   makeWrapper,
@@ -29,27 +27,22 @@ let
 in
 buildPythonPackage rec {
   pname = "camoufox";
-  version = "0.5.3";
+  version = "0.5.6";
   pyproject = true;
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-0wmNanHVOC9XL6l9jg/9rT9qXe/cSKTJVwbAcYAaic4=";
+    hash = "sha256-5K5z7JEzABJo7wdlU0/aDlRVCBKhmFDxQXVs1XL+k7k=";
   };
 
   patches = [ ./nix-executable-env.patch ];
 
-  # nixpkgs-unstable ships playwright 1.61.x; upstream caps at <1.61.
-  postPatch = ''
-    substituteInPlace pyproject.toml \
-      --replace-fail 'playwright = "<1.61"' 'playwright = "<1.62"'
-  '';
+  # Upstream caps playwright at <1.63; nixpkgs-unstable ships 1.61.x.
 
   build-system = [ poetry-core ];
 
   dependencies = [
     browserforge
-    click
     inquirer
     language-tags
     lxml
@@ -62,7 +55,6 @@ buildPythonPackage rec {
     requests
     rich-click
     screeninfo
-    tqdm
     typing-extensions
     ua-parser
   ];

@@ -10,12 +10,12 @@
   camoufoxSource ? {
     owner = "daijro";
     repo = "camoufox";
-    rev = "0583c3ec94f5a9df5cb2d09553fbfe80589b6e2d";
-    hash = "sha256-Fe/1t1ihDoZML87muiIZ9hQZyal7PUW8pUymoZnuMTo=";
-    version = "152.0.4";
+    rev = "eb5dc3bc5b917d1e6c71d9cacfecdddb55fbfc4a";
+    hash = "sha256-rjUGDd5I1ONw/FYTyXN03CBjhEbTY/T6hE1HZVL7fhc=";
+    version = "152.0.4-beta.31";
     firefoxVersion = "152.0.4";
     firefoxHash = "sha256-/YmYIgLNpTU6JzB9hdSJAtRldtRtHJ421VdA5jtSFrs=";
-    displayVersion = "152.0.4";
+    displayVersion = "152.0.4-beta.31";
     homepage = "https://github.com/daijro/camoufox";
     sourceName = "daijro/camoufox";
   },
@@ -294,22 +294,22 @@ let
             ;
         };
       }).override
-      {
-        # nixpkgs buildMozillaMach API rename (nixpkgs >= 801bef6-era):
-        # crashreporterSupport -> enableCrashReporter, ltoSupport ->
-        # enableLTO, pgoSupport -> enablePGO; addon knobs added here after
-        # being removed from the head args.
-        enableDebugSymbols = false;
-        enableCrashReporter = false;
-        enableOfficialBranding = false;
-        enableLTO = false;
-        enablePGO = false;
-        # was: requireSigning = false (head arg) — camoufox sideloads its own
-        # patches/settings, unsigned addons must load.
-        enableAddonSigning = false;
-        # was: allowAddonSideload = true (head arg).
-        enableAddonSideload = true;
-      }
+        {
+          # nixpkgs buildMozillaMach API rename (nixpkgs >= 801bef6-era):
+          # crashreporterSupport -> enableCrashReporter, ltoSupport ->
+          # enableLTO, pgoSupport -> enablePGO; addon knobs added here after
+          # being removed from the head args.
+          enableDebugSymbols = false;
+          enableCrashReporter = false;
+          enableOfficialBranding = false;
+          enableLTO = false;
+          enablePGO = false;
+          # was: requireSigning = false (head arg) — camoufox sideloads its own
+          # patches/settings, unsigned addons must load.
+          enableAddonSigning = false;
+          # was: allowAddonSideload = true (head arg).
+          enableAddonSideload = true;
+        }
     ).overrideAttrs
       (old: {
         inherit version;

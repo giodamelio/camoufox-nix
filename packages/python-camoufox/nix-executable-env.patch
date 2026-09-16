@@ -1,5 +1,5 @@
---- camoufox-0.5.3.orig/camoufox/__main__.py
-+++ camoufox-0.5.3/camoufox/__main__.py
+--- a/camoufox/__main__.py
++++ b/camoufox/__main__.py
 @@ -40,6 +40,7 @@
  )
  from .pkgman import (
@@ -28,10 +28,10 @@
  
  
  if __name__ == "__main__":
---- camoufox-0.5.3.orig/camoufox/pkgman.py
-+++ camoufox-0.5.3/camoufox/pkgman.py
-@@ -78,6 +78,21 @@
- console = Console()
+--- a/camoufox/pkgman.py
++++ b/camoufox/pkgman.py
+@@ -116,6 +116,21 @@
+     return profile_dir
  
  
 +def env_executable_path() -> Optional[Path]:
@@ -52,7 +52,7 @@
  def rprint(msg: str, fg: Optional[str] = None, nl: bool = True) -> None:
      """
      Print a styled message
-@@ -702,6 +717,8 @@
+@@ -769,6 +784,8 @@
      """
      Get the full version string of the active install
      """
@@ -61,7 +61,7 @@
      from .multiversion import get_active_path
  
      active = get_active_path()
-@@ -722,6 +739,9 @@
+@@ -805,6 +822,9 @@
      """
      Full path to the active camoufox folder
      """
@@ -71,7 +71,7 @@
      from .multiversion import COMPAT_FLAG, get_active_path
  
      # Clean up incompatible old data directory
-@@ -774,6 +794,12 @@
+@@ -874,6 +894,12 @@
      """
      Get the path to the camoufox executable
      """
@@ -84,21 +84,20 @@
      if browser_path:
          if OS_NAME == 'mac':
              exec_path = os.path.abspath(
---- camoufox-0.5.3.orig/camoufox/utils.py
-+++ camoufox-0.5.3/camoufox/utils.py
-@@ -24,7 +24,7 @@
- from .geolocation import geoip_allowed, get_geolocation
- from .ip import Proxy, public_ip, valid_ipv4, valid_ipv6
- from .locales import handle_locales
--from .pkgman import OS_NAME, get_path, installed_verstr, launch_path
-+from .pkgman import OS_NAME, env_executable_path, get_path, installed_verstr, launch_path
- from .virtdisplay import VirtualDisplay
- from ._warnings import LeakWarning
- from .webgl import sample_webgl
-@@ -544,6 +544,8 @@
-         i_know_what_im_doing = False
-     if env is None:
-         env = cast(Dict[str, Union[str, float, bool]], environ)
+--- a/camoufox/utils.py
++++ b/camoufox/utils.py
+@@ -30,6 +30,7 @@
+ from .pkgman import (
+     INSTALL_DIR,
+     OS_NAME,
++    env_executable_path,
+     Version,
+     effective_version_min,
+     ensure_browser_profile_dir,
+@@ -726,6 +727,8 @@
+     # mappings supplied by callers. In particular, DISPLAY must not outlive the
+     # virtual display that owns it.
+     env = dict(environ) if env is None else dict(env)
 +    if executable_path is None:
 +        executable_path = env_executable_path()
      if isinstance(executable_path, str):
