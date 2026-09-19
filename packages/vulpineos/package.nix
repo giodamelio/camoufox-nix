@@ -6,7 +6,7 @@
 
 buildGoModule rec {
   pname = "vulpineos";
-  version = "0-unstable-2026-04-29";
+  version = "0.1.8-dev.7";
   rev = "f8579728616e892c364aa4c571f05db5869bc59f";
 
   src = fetchFromGitHub {
