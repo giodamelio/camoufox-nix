@@ -8,10 +8,11 @@ let
       repo = "VulpineOS";
       rev = "f8579728616e892c364aa4c571f05db5869bc59f";
       hash = "sha256-HGQ1FeJIG/i/fwIynqK3K/c3V1MS7ZjKvKSc23XjKg0=";
-      version = "0-unstable-2026-04-29";
+      version = "0-unstable-2026-06-29";
       firefoxVersion = "146.0.1";
       firefoxHash = "sha256-6WeKDoRzkjlT4dwxLDeRkGhiO2qiCtreFiZgSSWBkes=";
       displayVersion = "146.0.1-beta.25";
+      mozTarget = pkgs.lib.replaceStrings [ "-pc-" ] [ "-unknown-" ] pkgs.stdenv.hostPlatform.config;
       homepage = "https://github.com/VulpineOS/VulpineOS";
       sourceName = "VulpineOS/VulpineOS";
       settingsConfig = "vulpine.cfg";

@@ -51,17 +51,19 @@ let
   additionsSource = upstreamSrc + "/additions";
 
   linuxMozTarget =
-    let
-      cpuName = stdenv.hostPlatform.parsed.cpu.name or null;
-    in
-    if cpuName == "aarch64" || cpuName == "arm64" then
-      "aarch64-unknown-linux-gnu"
-    else if cpuName == "i686" then
-      "i686-pc-linux-gnu"
-    else if cpuName == "x86_64" then
-      "x86_64-pc-linux-gnu"
-    else
-      throw "Unsupported Linux moz target CPU: ${toString cpuName}";
+    camoufoxSource.mozTarget or (
+      let
+        cpuName = stdenv.hostPlatform.parsed.cpu.name or null;
+      in
+      if cpuName == "aarch64" || cpuName == "arm64" then
+        "aarch64-unknown-linux-gnu"
+      else if cpuName == "i686" then
+        "i686-pc-linux-gnu"
+      else if cpuName == "x86_64" then
+        "x86_64-pc-linux-gnu"
+      else
+        throw "Unsupported Linux moz target CPU: ${toString cpuName}"
+    );
 
   listPatchFiles =
     dir:

@@ -27,21 +27,21 @@ versions identify source snapshots, not upstream releases.
 
 | Flake package | Version | Description | Declared platforms |
 | --- | --- | --- | --- |
-| `camoufox` | `150.0.2` | Patched Camoufox/Firefox browser source build | Linux |
-| `camoufox-bin` | `150.0.2-beta.25` | Prebuilt Camoufox release patched for NixOS; no Firefox compile | Linux `x86_64`, `aarch64` |
-| `camoufox-vulpineos` | `0-unstable-2026-04-29` | VulpineOS Camoufox fork; browser display version `146.0.1-beta.25` | Linux |
-| `python-camoufox` | `0.5.3` | Python interface for launching Camoufox with Playwright | Unix |
+| `camoufox` | `152.0.4-beta.31` | Patched Camoufox/Firefox browser source build | Linux |
+| `camoufox-bin` | `152.0.4-beta.30` | Prebuilt Camoufox release patched for NixOS; no Firefox compile | Linux `x86_64`, `aarch64` |
+| `camoufox-vulpineos` | `0-unstable-2026-06-29` | VulpineOS Camoufox fork; browser display version `146.0.1-beta.25` | Linux |
+| `python-camoufox` | `0.5.6` | Python interface for launching Camoufox with Playwright | Unix |
 | `cloverlabs-camoufox` | `0.6.0` | CloverLabs Python interface; GeoIP enabled by default | Unix |
 | `camoufox-browser-cli` | `0.1.1` | Python CLI with optional MCP support; built here with MCP enabled | Unix |
-| `camofox-cli` | `0.7.1` | Node automation CLI | Linux |
-| `camofox-browser` | `2.4.6` | Node anti-detection browser server | Linux |
+| `camofox-cli` | `0.7.3` | Node automation CLI | Linux |
+| `camofox-browser` | `2.4.7` | Node anti-detection browser server | Linux |
 | `jo-camofox-browser` | `1.9.1` | Node browser server from `maximoffua/camofox-browser` | Linux |
-| `camofox-mcp` | `1.14.5` | Node MCP server; also provides `camofox-mcp-http` | Linux |
-| `camoufox-reverse-mcp` | `1.1.0-unstable-2026-05-08` | Python MCP server for JavaScript reverse engineering | Unix |
-| `camoufox-js` | `0.11.2` | JavaScript interface and CLI for Playwright | Linux |
+| `camofox-mcp` | `1.15.0` | Node MCP server; also provides `camofox-mcp-http` | Linux |
+| `camoufox-reverse-mcp` | `1.8.0` | Python MCP server for JavaScript reverse engineering | Unix |
+| `camoufox-js` | `0.12.0` | JavaScript interface and CLI for Playwright | Linux |
 | `camoufox-mcp-server` | `1.5.0` target | Placeholder for `whit3rabbit/camoufox-mcp`; exits non-zero | Unix |
 | `foxbridge` | `0.1.1` | CDP-to-Firefox protocol proxy | Unix |
-| `vulpineos` | `0-unstable-2026-04-29` | VulpineOS browser-agent runtime | Linux |
+| `vulpineos` | `0.1.8-dev.7` | VulpineOS browser-agent runtime | Linux |
 | `vulpineos-camoufox-notes` | `0.1.0` | Reference documentation derivation; no binary | All |
 | `docker-camoufox-camofox-mcp` | `latest` | OCI image containing `camoufox` and `camofox-mcp` | OCI tarball |
 | `docker-vulpineos-foxbridge` | `latest` | OCI image containing VulpineOS, foxbridge, and VulpineOS Camoufox | OCI tarball |
@@ -107,10 +107,10 @@ and Firefox version are derived:
 ```nix
 camoufox-bin-next = camoufox-bin.override {
   camoufoxBinSource = {
-    release = "v150.0.2-beta.25";
+    release = "v152.0.4-beta.30";
     sources = {
-      x86_64-linux = { version = "150.0.2-alpha.26"; hash = "sha256-..."; };
-      aarch64-linux = { version = "150.0.2-alpha.25"; hash = "sha256-..."; };
+      x86_64-linux = { version = "152.0.4-beta.30"; hash = "sha256-..."; };
+      aarch64-linux = { version = "152.0.4-beta.30"; hash = "sha256-..."; };
     };
   };
 };
@@ -219,7 +219,7 @@ browser. The browser itself remains Linux-only.
 
 ## `camoufox-js` note
 
-`camoufox-js` is packaged at `0.11.2`; it is not the old placeholder. The Nix
+`camoufox-js` is packaged at `0.12.0`; it is not the old placeholder. The Nix
 recipe adds its lockfile, injects `playwright-core`, rebuilds its
 `better-sqlite3` native module offline, and uses `--ignore-scripts`. Its wrapper
 accepts the executable environment variables above. When a Nix browser path is
